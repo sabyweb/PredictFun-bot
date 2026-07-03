@@ -1,9 +1,26 @@
 {
-  "started_at": 1783061261.435461,
+  "started_at": 1783061489.964301,
   "mode": "LIVE",
   "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
-  "orders": [],
-  "ended_at": 1783061279.660884,
+  "orders": [
+    {
+      "market_id": 52261,
+      "question": "Will Ethereum hit $1,000 or $3,000 first?",
+      "side": "BUY",
+      "price": 0.55,
+      "shares": 1.8181818181818181,
+      "order_id": "757662046",
+      "preflight": {
+        "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
+        "usdt_balance": 101.0,
+        "usdt_allowance": 1.157920892373162e+59,
+        "required": 1.0,
+        "can_place": true,
+        "reason": null
+      }
+    }
+  ],
+  "ended_at": 1783061508.0774899,
   "rate_limits": {
     "general": {
       "limit": 240,
@@ -12,14 +29,14 @@
     },
     "trading": {
       "limit": 500,
-      "remaining": 496,
+      "remaining": 499,
       "calls": 11
     }
   },
   "safety_summary": {
     "killed": false,
     "kill_reason": null,
-    "open_orders": 0,
-    "total_notional": 0.0
+    "open_orders": 1,
+    "total_notional": 1.0
   }
 }

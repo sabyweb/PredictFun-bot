@@ -117,7 +117,6 @@ class OrderSigner:
                     "slippageBps": "0",
                     "isFillOrKill": False,
                     "isPostOnly": False,
-                    "reservedBalancePolicy": "REJECT_MARKET_ORDER",
                     "isMinAmountOut": False,
                     "selfTradePrevention": "CANCEL_MAKER",
                     "order": {
