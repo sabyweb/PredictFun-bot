@@ -172,7 +172,15 @@ class PredictFunClient:
                     await asyncio.sleep(retry_after)
                     continue
 
-                resp.raise_for_status()
+                try:
+                    resp.raise_for_status()
+                except httpx.HTTPStatusError as e:
+                    try:
+                        body = resp.json()
+                        log.error(f"HTTP {resp.status_code} response: {body}")
+                    except Exception:
+                        log.error(f"HTTP {resp.status_code} response text: {resp.text[:500]}")
+                    raise
                 return resp.json()
             except httpx.HTTPStatusError as e:
                 if 500 <= e.response.status_code < 600 and attempt < self.config.max_retries:
@@ -257,8 +265,10 @@ class PredictFunClient:
     async def create_order(self, payload: dict[str, Any]) -> dict[str, Any]:
         """POST /v1/orders. In PAPER mode, logs and returns a fake ID."""
         if self.config.mode == "PAPER":
-            fake_id = f"paper-{payload.get('salt', '0')[:16]}"
-            log.info(f"[PAPER] intercepted POST /v1/orders: market={payload.get('marketId')} side={payload.get('side')} price={payload.get('pricePerShare')} shares={payload.get('shares')}")
+            data = payload.get("data", {})
+            order = data.get("order", {})
+            fake_id = f"paper-{order.get('salt', '0')[:16]}"
+            log.info(f"[PAPER] intercepted POST /v1/orders: market={order.get('tokenId')} strategy={data.get('strategy')} price={data.get('pricePerShare')}")
             log.debug(f"[PAPER] full payload keys: {list(payload.keys())}")
             return {"data": {"id": fake_id, "status": "PAPER"}, "success": True}
         if self.config.mode == "SHADOW":

@@ -1,5 +1,5 @@
 {
-  "started_at": 1783061129.2200918,
+  "started_at": 1783061395.236925,
   "mode": "PAPER",
   "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
   "signed_orders": [
@@ -9,7 +9,7 @@
       "side": "BUY",
       "price": 0.55,
       "shares": 1.8181818181818181,
-      "paper_id": "paper-753838335",
+      "paper_id": "paper-452685096",
       "preflight": {
         "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
         "usdt_balance": 101.0,
@@ -32,7 +32,7 @@
     "usdt_balance": 101.0,
     "usdt_allowance_ctf": 1.157920892373162e+59
   },
-  "ended_at": 1783061148.554854,
+  "ended_at": 1783061415.2615712,
   "rate_limits": {
     "general": {
       "limit": 240,

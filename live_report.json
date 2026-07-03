@@ -1,0 +1,25 @@
+{
+  "started_at": 1783061261.435461,
+  "mode": "LIVE",
+  "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
+  "orders": [],
+  "ended_at": 1783061279.660884,
+  "rate_limits": {
+    "general": {
+      "limit": 240,
+      "remaining": 239,
+      "calls": 12
+    },
+    "trading": {
+      "limit": 500,
+      "remaining": 496,
+      "calls": 11
+    }
+  },
+  "safety_summary": {
+    "killed": false,
+    "kill_reason": null,
+    "open_orders": 0,
+    "total_notional": 0.0
+  }
+}

@@ -123,13 +123,14 @@ class PaperTrader:
                 try:
                     resp = await self.client.create_order(payload)
                     self.guard.record_intended_order("PAPER", ms, "buy", price, shares)
+                    resp_data = resp.get("data", {})
                     self.report["signed_orders"].append({
                         "market_id": ms.market_id,
                         "question": ms.question,
                         "side": "BUY",
                         "price": price,
                         "shares": shares,
-                        "paper_id": resp.get("data", {}).get("id"),
+                        "paper_id": resp_data.get("orderId") or resp_data.get("id"),
                         "preflight": preflight,
                     })
                 except Exception as e:

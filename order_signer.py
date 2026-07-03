@@ -108,25 +108,35 @@ class OrderSigner:
                 is_yield_bearing=ms.is_yield_bearing,
             )
             signed = self.builder.sign_typed_data_order(typed_data)
+            order_hash = self.builder.build_typed_data_hash(typed_data)
 
             return {
-                "marketId": ms.market_id,
-                "side": "BUY" if sdk_side == Side.BUY else "SELL",
-                "type": "LIMIT",
-                "pricePerShare": str(price_wei),
-                "shares": str(qty_wei),
-                "salt": signed.salt,
-                "maker": signed.maker,
-                "signer": signed.signer,
-                "taker": signed.taker,
-                "tokenId": signed.token_id,
-                "makerAmount": signed.maker_amount,
-                "takerAmount": signed.taker_amount,
-                "expiration": signed.expiration,
-                "nonce": signed.nonce,
-                "feeRateBps": signed.fee_rate_bps,
-                "signatureType": int(signed.signature_type),
-                "signature": signed.signature,
+                "data": {
+                    "strategy": "LIMIT",
+                    "pricePerShare": str(price_wei),
+                    "slippageBps": "0",
+                    "isFillOrKill": False,
+                    "isPostOnly": False,
+                    "reservedBalancePolicy": "REJECT_MARKET_ORDER",
+                    "isMinAmountOut": False,
+                    "selfTradePrevention": "CANCEL_MAKER",
+                    "order": {
+                        "hash": order_hash,
+                        "salt": signed.salt,
+                        "maker": signed.maker,
+                        "signer": signed.signer,
+                        "taker": signed.taker,
+                        "tokenId": signed.token_id,
+                        "makerAmount": signed.maker_amount,
+                        "takerAmount": signed.taker_amount,
+                        "expiration": int(signed.expiration),
+                        "nonce": signed.nonce,
+                        "feeRateBps": signed.fee_rate_bps,
+                        "side": int(signed.side),
+                        "signatureType": int(signed.signature_type),
+                        "signature": signed.signature,
+                    },
+                }
             }
         except Exception as e:
             log.exception(f"Failed to build signed order: {e}")
