@@ -1,54 +1,22 @@
 {
-  "started_at": 1783056831.960722,
+  "started_at": 1783061129.2200918,
   "mode": "PAPER",
-  "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+  "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
   "signed_orders": [
     {
       "market_id": 52261,
       "question": "Will Ethereum hit $1,000 or $3,000 first?",
       "side": "BUY",
       "price": 0.55,
-      "shares": 9.09090909090909,
-      "paper_id": "paper-1035909579",
+      "shares": 1.8181818181818181,
+      "paper_id": "paper-753838335",
       "preflight": {
-        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
-        "usdt_balance": 426.88666,
-        "usdt_allowance": 0.0,
-        "required": 5.0,
-        "can_place": false,
-        "reason": "insufficient allowance: 0.0000 < 5.0000"
-      }
-    },
-    {
-      "market_id": 142932,
-      "question": "Will BNB hit $400 or $800 first?",
-      "side": "BUY",
-      "price": 0.53,
-      "shares": 9.433962264150942,
-      "paper_id": "paper-1159586104",
-      "preflight": {
-        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
-        "usdt_balance": 426.88666,
-        "usdt_allowance": 0.0,
-        "required": 5.0,
-        "can_place": false,
-        "reason": "insufficient allowance: 0.0000 < 5.0000"
-      }
-    },
-    {
-      "market_id": 58416,
-      "question": "Will Solana hit $60 or $140 first?",
-      "side": "BUY",
-      "price": 0.73,
-      "shares": 6.8493150684931505,
-      "paper_id": "paper-1725844543",
-      "preflight": {
-        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
-        "usdt_balance": 426.88666,
-        "usdt_allowance": 0.0,
-        "required": 5.0,
-        "can_place": false,
-        "reason": "insufficient allowance: 0.0000 < 5.0000"
+        "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
+        "usdt_balance": 101.0,
+        "usdt_allowance": 1.157920892373162e+59,
+        "required": 1.0,
+        "can_place": true,
+        "reason": null
       }
     }
   ],
@@ -59,22 +27,22 @@
     "total_notional": 0.0
   },
   "on_chain_summary": {
-    "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+    "address": "0x9Bb2E9f93696027D502fccBa6444886CDFC1c8F9",
     "chain_id": 56,
-    "usdt_balance": 426.88666,
-    "usdt_allowance_ctf": 0.0
+    "usdt_balance": 101.0,
+    "usdt_allowance_ctf": 1.157920892373162e+59
   },
-  "ended_at": 1783056855.978104,
+  "ended_at": 1783061148.554854,
   "rate_limits": {
     "general": {
       "limit": 240,
       "remaining": 239,
-      "calls": 12
+      "calls": 13
     },
     "trading": {
       "limit": 500,
-      "remaining": 497,
-      "calls": 13
+      "remaining": 499,
+      "calls": 10
     }
   }
 }

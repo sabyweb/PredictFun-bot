@@ -21,13 +21,21 @@ log = logging.getLogger("predict_fun")
 class OnChainChecker:
     """Read-only on-chain state for the trading address."""
 
-    def __init__(self, private_key: str | None = None, chain_id: ChainId = ChainId.BNB_MAINNET):
+    def __init__(
+        self,
+        private_key: str | None = None,
+        predict_account: str | None = None,
+        chain_id: ChainId = ChainId.BNB_MAINNET,
+    ):
         self.config = get_config()
         self.private_key = (private_key or self.config.private_key or "").strip().strip("'\"")
+        self.predict_account = (predict_account or self.config.predict_account or "").strip()
         if not self.private_key:
             raise RuntimeError("PREDICT_FUN_PRIVATE_KEY is required for on-chain checks")
         self.account = Account.from_key(self.private_key)
-        self.address = self.account.address
+        # The smart wallet is what holds funds and trades; EOA just signs.
+        self.address = self.predict_account or self.account.address
+        self.eoa_address = self.account.address
         self.chain_id = chain_id
         self.addresses = ADDRESSES_BY_CHAIN_ID[chain_id]
         self._w3 = self._make_w3()

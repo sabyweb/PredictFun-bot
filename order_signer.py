@@ -37,17 +37,21 @@ def _shares_to_wei(shares: float, precision: int = 18) -> int:
 class OrderSigner:
     """Wraps predict-sdk OrderBuilder for EOA signing."""
 
-    def __init__(self, private_key: str | None = None, chain_id: ChainId = ChainId.BNB_MAINNET):
+    def __init__(self, private_key: str | None = None, predict_account: str | None = None, chain_id: ChainId = ChainId.BNB_MAINNET):
         self.config = get_config()
         self.private_key = (private_key or self.config.private_key or "").strip().strip("'\"")
+        self.predict_account = (predict_account or self.config.predict_account or "").strip()
         if not self.private_key:
             raise RuntimeError("PREDICT_FUN_PRIVATE_KEY is required for signing")
+        options = OrderBuilderOptions(precision=18)
+        if self.predict_account:
+            options = OrderBuilderOptions(precision=18, predict_account=self.predict_account)
         self.builder = OrderBuilder.make(
             chain_id=chain_id,
             signer=self.private_key,
-            options=OrderBuilderOptions(precision=18),
+            options=options,
         )
-        self.address = self.builder._signer.address if self.builder._signer else None
+        self.address = self.predict_account or (self.builder._signer.address if self.builder._signer else None)
         log.info(f"OrderSigner initialized for {self.address}")
 
     def build_signed_order(

@@ -31,6 +31,7 @@ class BotConfig:
 
     api_key: str = field(default_factory=lambda: os.environ.get("PREDICT_FUN_API_KEY", ""))
     private_key: str | None = field(default_factory=lambda: os.environ.get("PREDICT_FUN_PRIVATE_KEY") or None)
+    predict_account: str | None = field(default_factory=lambda: os.environ.get("PREDICT_FUN_PREDICT_ACCOUNT") or None)
     base_url: str = DEFAULT_BASE_URL
     ws_url: str = DEFAULT_WS_URL
     mode: Mode = field(default_factory=lambda: _parse_mode(os.environ.get("PREDICT_FUN_MODE", "SHADOW")))
