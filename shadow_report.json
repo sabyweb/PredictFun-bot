@@ -1,0 +1,43 @@
+{
+  "started_at": 1783050183.061304,
+  "cycles": [
+    {
+      "timestamp": 1783050200.016376,
+      "markets": 5,
+      "placements": 10,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.0064,
+      "max_spread": 0.01
+    },
+    {
+      "timestamp": 1783050205.248445,
+      "markets": 5,
+      "placements": 10,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.0064,
+      "max_spread": 0.01
+    }
+  ],
+  "summary": {
+    "markets": 10,
+    "placements": 20,
+    "fills": 0,
+    "dumps": 0,
+    "cycles": 2
+  },
+  "ended_at": 1783050205.24845,
+  "rate_limits": {
+    "general": {
+      "limit": 240,
+      "remaining": 239,
+      "calls": 10
+    },
+    "trading": {
+      "limit": 500,
+      "remaining": 497,
+      "calls": 25
+    }
+  }
+}
