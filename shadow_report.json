@@ -1,33 +1,105 @@
 {
-  "started_at": 1783050183.061304,
+  "started_at": 1783050321.127129,
   "cycles": [
     {
-      "timestamp": 1783050200.016376,
-      "markets": 5,
-      "placements": 10,
+      "timestamp": 1783050365.894546,
+      "markets": 30,
+      "placements": 60,
       "fills": 0,
       "dumps": 0,
-      "avg_spread": 0.0064,
-      "max_spread": 0.01
+      "avg_spread": 0.004,
+      "max_spread": 0.034
     },
     {
-      "timestamp": 1783050205.248445,
-      "markets": 5,
-      "placements": 10,
+      "timestamp": 1783050378.530057,
+      "markets": 30,
+      "placements": 60,
       "fills": 0,
       "dumps": 0,
-      "avg_spread": 0.0064,
-      "max_spread": 0.01
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050392.735233,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050406.695209,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050421.2967381,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050435.5773811,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050448.3056252,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050462.1917598,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050475.9943411,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
+    },
+    {
+      "timestamp": 1783050490.2373729,
+      "markets": 30,
+      "placements": 60,
+      "fills": 0,
+      "dumps": 0,
+      "avg_spread": 0.004,
+      "max_spread": 0.034
     }
   ],
   "summary": {
-    "markets": 10,
-    "placements": 20,
+    "markets": 300,
+    "placements": 600,
     "fills": 0,
     "dumps": 0,
-    "cycles": 2
+    "cycles": 10
   },
-  "ended_at": 1783050205.24845,
+  "ended_at": 1783050490.2373781,
   "rate_limits": {
     "general": {
       "limit": 240,
@@ -36,8 +108,8 @@
     },
     "trading": {
       "limit": 500,
-      "remaining": 497,
-      "calls": 25
+      "remaining": 499,
+      "calls": 346
     }
   }
 }
