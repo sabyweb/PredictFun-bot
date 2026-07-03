@@ -92,12 +92,13 @@ class RateLimitState:
 class PredictFunClient:
     """REST client for Predict.Fun public endpoints."""
 
-    def __init__(self, config=None, client: httpx.AsyncClient | None = None):
+    def __init__(self, config=None, client: httpx.AsyncClient | None = None, auth=None):
         self.config = config or get_config()
         self.api_key = self.config.require_api_key()
         self.base_url = self.config.base_url.rstrip("/")
         self._client = client
         self._owned_client = client is None
+        self.auth = auth
         self._last_call = 0.0
         self._call_lock = asyncio.Lock()
         self.general_limit = RateLimitState(self.config.general_rpm)
@@ -120,6 +121,14 @@ class PredictFunClient:
             "Accept": "application/json",
         }
 
+    async def _auth_headers(self) -> dict[str, str]:
+        headers = self._headers()
+        if self.auth:
+            token = await self.auth.get_jwt()
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+        return headers
+
     async def _throttle(self) -> None:
         async with self._call_lock:
             elapsed = time.time() - self._last_call
@@ -134,7 +143,7 @@ class PredictFunClient:
         *,
         params: dict[str, Any] | None = None,
         json_body: dict[str, Any] | None = None,
-        auth_token: str | None = None,
+        authenticated: bool = False,
     ) -> dict[str, Any]:
         """Make a rate-limited request and return JSON."""
         bucket = _bucket_for_path(path.split("?")[0])
@@ -142,9 +151,7 @@ class PredictFunClient:
         await limit_state.acquire()
         await self._throttle()
 
-        headers = self._headers()
-        if auth_token:
-            headers["Authorization"] = f"Bearer {auth_token}"
+        headers = await self._auth_headers() if authenticated else self._headers()
         if json_body is not None:
             headers["Content-Type"] = "application/json"
 
@@ -219,7 +226,7 @@ class PredictFunClient:
     async def get_tags(self) -> dict[str, Any]:
         return await self._request("GET", "/v1/tags")
 
-    # --- Account / trading endpoints (JWT required; stubbed for now) ---
+    # --- Account / trading endpoints (JWT required) ---
 
     async def get_auth_message(self) -> dict[str, Any]:
         return await self._request("GET", "/v1/auth/message")
@@ -229,6 +236,47 @@ class PredictFunClient:
             "POST",
             "/v1/auth",
             json_body={"signer": signer, "message": message, "signature": signature},
+        )
+
+    async def get_account(self) -> dict[str, Any]:
+        return await self._request("GET", "/v1/account", authenticated=True)
+
+    async def get_account_activity(self) -> dict[str, Any]:
+        return await self._request("GET", "/v1/account/activity", authenticated=True)
+
+    async def get_orders(self, market_id: int | str | None = None) -> dict[str, Any]:
+        params = {"marketId": market_id} if market_id is not None else None
+        return await self._request("GET", "/v1/orders", params=params, authenticated=True)
+
+    async def get_order(self, order_hash: str) -> dict[str, Any]:
+        return await self._request("GET", f"/v1/orders/{order_hash}", authenticated=True)
+
+    async def get_positions(self) -> dict[str, Any]:
+        return await self._request("GET", "/v1/positions", authenticated=True)
+
+    async def create_order(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """POST /v1/orders. In PAPER mode, logs and returns a fake ID."""
+        if self.config.mode == "PAPER":
+            fake_id = f"paper-{payload.get('salt', '0')[:16]}"
+            log.info(f"[PAPER] intercepted POST /v1/orders: market={payload.get('marketId')} side={payload.get('side')} price={payload.get('pricePerShare')} shares={payload.get('shares')}")
+            log.debug(f"[PAPER] full payload keys: {list(payload.keys())}")
+            return {"data": {"id": fake_id, "status": "PAPER"}, "success": True}
+        if self.config.mode == "SHADOW":
+            raise RuntimeError("create_order called in SHADOW mode")
+        return await self._request("POST", "/v1/orders", json_body=payload, authenticated=True)
+
+    async def cancel_order(self, order_hash: str) -> dict[str, Any]:
+        """POST /v1/orders/remove. In PAPER mode, logs and returns success."""
+        if self.config.mode == "PAPER":
+            log.info(f"[PAPER] intercepted POST /v1/orders/remove: hash={order_hash}")
+            return {"data": {"orderHash": order_hash, "status": "PAPER_CANCELLED"}, "success": True}
+        if self.config.mode == "SHADOW":
+            raise RuntimeError("cancel_order called in SHADOW mode")
+        return await self._request(
+            "POST",
+            "/v1/orders/remove",
+            json_body={"orderHash": order_hash},
+            authenticated=True,
         )
 
     def rate_limit_summary(self) -> dict[str, Any]:

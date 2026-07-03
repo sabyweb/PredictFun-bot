@@ -163,8 +163,8 @@ async def main():
     if not cfg.api_key:
         log.error("PREDICT_FUN_API_KEY is required")
         sys.exit(1)
-    if not cfg.shadow_mode:
-        log.warning("shadow_mode is False; refusing to run without explicit override")
+    if cfg.mode != "SHADOW":
+        log.warning(f"Mode is {cfg.mode}; run_shadow.py requires SHADOW mode")
         sys.exit(1)
 
     runner = ShadowRunner(max_markets=args.markets, cycles=args.cycles, cycle_interval=args.interval)

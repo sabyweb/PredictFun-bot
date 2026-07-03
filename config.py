@@ -6,7 +6,7 @@ module-level defaults.
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 from dotenv import load_dotenv
 
@@ -15,6 +15,14 @@ load_dotenv()
 
 DEFAULT_BASE_URL = "https://api.predict.fun"
 DEFAULT_WS_URL = "wss://ws.predict.fun/ws"
+Mode = Literal["SHADOW", "PAPER", "LIVE"]
+
+
+def _parse_mode(value: str) -> Mode:
+    v = value.upper()
+    if v in {"SHADOW", "PAPER", "LIVE"}:
+        return v  # type: ignore[return-value]
+    return "SHADOW"
 
 
 @dataclass
@@ -25,7 +33,7 @@ class BotConfig:
     private_key: str | None = field(default_factory=lambda: os.environ.get("PREDICT_FUN_PRIVATE_KEY") or None)
     base_url: str = DEFAULT_BASE_URL
     ws_url: str = DEFAULT_WS_URL
-    shadow_mode: bool = True
+    mode: Mode = field(default_factory=lambda: _parse_mode(os.environ.get("PREDICT_FUN_MODE", "SHADOW")))
 
     # Rate limits (per user instructions). Separate buckets for General and Trading.
     general_rpm: int = 240

@@ -1,0 +1,44 @@
+{
+  "started_at": 1783056387.0395362,
+  "mode": "PAPER",
+  "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+  "signed_orders": [
+    {
+      "market_id": 52261,
+      "question": "Will Ethereum hit $1,000 or $3,000 first?",
+      "side": "BUY",
+      "price": 0.55,
+      "shares": 100.0,
+      "paper_id": "paper-1581001878"
+    },
+    {
+      "market_id": 142932,
+      "question": "Will BNB hit $400 or $800 first?",
+      "side": "BUY",
+      "price": 0.53,
+      "shares": 100.0,
+      "paper_id": "paper-1783856601"
+    },
+    {
+      "market_id": 58416,
+      "question": "Will Solana hit $60 or $140 first?",
+      "side": "BUY",
+      "price": 0.73,
+      "shares": 100.0,
+      "paper_id": "paper-87326944"
+    }
+  ],
+  "ended_at": 1783056400.949497,
+  "rate_limits": {
+    "general": {
+      "limit": 240,
+      "remaining": 239,
+      "calls": 12
+    },
+    "trading": {
+      "limit": 500,
+      "remaining": 496,
+      "calls": 13
+    }
+  }
+}
