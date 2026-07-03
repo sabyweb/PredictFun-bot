@@ -8,23 +8,76 @@ from shadow_engine import ShadowEngine
 from models import MarketState
 
 
-def test_shadow_runner_never_posts_orders():
-    """Shadow mode must never call POST /v1/orders or POST /v1/orders/remove."""
+def test_no_create_or_cancel_methods_on_client():
+    """The REST client must not expose order-placement methods in shadow phase."""
     client = PredictFunClient()
-    posted = []
+    assert not hasattr(client, "create_order")
+    assert not hasattr(client, "cancel_order")
 
-    async def fake_request(method, url, **kwargs):
-        if method == "POST" and "/v1/orders" in url:
-            posted.append((method, url))
-        # Return empty success for any GET.
-        return MagicMock(status_code=200, headers={}, json=lambda: {"data": [], "success": True})
 
-    with patch.object(client, "_request", new=fake_request):
-        # In shadow mode, only GET methods should be invoked.
-        assert client._request is fake_request
-        # The public API only exposes GET helpers in shadow usage.
-        assert not hasattr(client, "create_order") or True  # create_order does not exist on client
-    assert posted == []
+def test_run_shadow_only_uses_get_requests():
+    """run_shadow.py must only issue GET requests to public endpoints."""
+    import asyncio
+    from run_shadow import ShadowRunner
+
+    async def run():
+        methods = []
+        runner = ShadowRunner(max_markets=2, cycles=1, cycle_interval=0)
+
+        async def capture(method, path, **kwargs):
+            methods.append((method, path))
+            if "/orderbook" in path:
+                return {"data": {"bids": [[0.45, 100]], "asks": [[0.46, 100]]}}
+            if "/v1/markets/" in path:
+                return {
+                    "data": {
+                        "id": 1,
+                        "question": "Test",
+                        "decimalPrecision": 2,
+                        "feeRateBps": 0,
+                        "isNegRisk": False,
+                        "isYieldBearing": False,
+                        "status": "REGISTERED",
+                        "tradingStatus": "OPEN",
+                        "outcomes": [
+                            {"name": "Yes", "onChainId": "1"},
+                            {"name": "No", "onChainId": "2"},
+                        ],
+                    },
+                    "success": True,
+                }
+            return {
+                "data": [
+                    {
+                        "id": 1,
+                        "question": "Test",
+                        "decimalPrecision": 2,
+                        "feeRateBps": 0,
+                        "isNegRisk": False,
+                        "isYieldBearing": False,
+                        "status": "REGISTERED",
+                        "tradingStatus": "OPEN",
+                        "outcomes": [
+                            {"name": "Yes", "onChainId": "1"},
+                            {"name": "No", "onChainId": "2"},
+                        ],
+                    }
+                ],
+                "cursor": None,
+                "success": True,
+            }
+
+        with patch.object(runner.client, "_request", new=capture):
+            try:
+                await runner.run()
+            except Exception:
+                pass  # empty data is fine for this invariant test
+        return methods
+
+    methods = asyncio.run(run())
+    assert all(m == "GET" for m, _ in methods), f"Non-GET methods detected: {methods}"
+    assert any("/v1/markets" in p for _, p in methods)
+    assert any("/orderbook" in p for _, p in methods)
 
 
 def test_rate_limit_headers_parsed():

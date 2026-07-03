@@ -267,14 +267,14 @@ class PredictFunWebSocket:
         return self._req_id
 
     async def connect(self) -> None:
+        """Establish the WebSocket connection and start the receive loop."""
         log.info(f"Connecting to Predict.Fun WS: {self.url}")
         extra_headers = {"x-api-key": self.api_key}
         self.ws = await websockets.connect(self.url, additional_headers=extra_headers)
         self._running = True
-        self._receive_task = asyncio.create_task(self._receive_loop())
-        # Server heartbeat is push-only; we echo in receive loop.
+        if self._receive_task is None or self._receive_task.done():
+            self._receive_task = asyncio.create_task(self._receive_loop())
         log.info("Predict.Fun WS connected")
-        # Resubscribe after reconnect.
         for topic in list(self._subscriptions):
             await self.subscribe(topic)
 
@@ -286,6 +286,7 @@ class PredictFunWebSocket:
                 await self._receive_task
             except asyncio.CancelledError:
                 pass
+            self._receive_task = None
         if self.ws:
             await self.ws.close()
             self.ws = None
@@ -294,22 +295,30 @@ class PredictFunWebSocket:
         self._subscriptions.add(topic)
         req_id = self._next_req_id()
         if self.ws and self._running:
-            await self.ws.send(json.dumps({"method": "subscribe", "requestId": req_id, "params": [topic]}))
+            try:
+                await self.ws.send(json.dumps({"method": "subscribe", "requestId": req_id, "params": [topic]}))
+            except websockets.ConnectionClosed:
+                log.warning(f"WS closed while subscribing to {topic}; will retry on reconnect")
         return req_id
 
     async def unsubscribe(self, topic: str) -> int:
         self._subscriptions.discard(topic)
         req_id = self._next_req_id()
         if self.ws and self._running:
-            await self.ws.send(json.dumps({"method": "unsubscribe", "requestId": req_id, "params": [topic]}))
+            try:
+                await self.ws.send(json.dumps({"method": "unsubscribe", "requestId": req_id, "params": [topic]}))
+            except websockets.ConnectionClosed:
+                pass
         return req_id
 
     async def _receive_loop(self) -> None:
+        """Single receive loop. Handles connection loss internally."""
         while self._running:
             try:
                 if self.ws is None:
                     await self._reconnect()
-                    continue
+                    if self.ws is None:
+                        continue
                 msg = await asyncio.wait_for(self.ws.recv(), timeout=self.config.ws_heartbeat_interval + 10)
                 if isinstance(msg, bytes):
                     msg = msg.decode("utf-8")
@@ -317,13 +326,13 @@ class PredictFunWebSocket:
                 await self._handle_message(data)
             except asyncio.TimeoutError:
                 log.warning("Predict.Fun WS receive timeout; reconnecting")
-                await self._reconnect()
+                await self._safe_close_ws()
             except websockets.ConnectionClosed:
                 log.warning("Predict.Fun WS closed; reconnecting")
-                await self._reconnect()
+                await self._safe_close_ws()
             except Exception as e:
                 log.exception(f"Predict.Fun WS error: {e}")
-                await self._reconnect()
+                await self._safe_close_ws()
 
     async def _handle_message(self, data: dict[str, Any]) -> None:
         msg_type = data.get("type")
@@ -331,26 +340,38 @@ class PredictFunWebSocket:
         if msg_type == "M" and topic == "heartbeat":
             ts = data.get("data")
             if ts is not None and self.ws:
-                await self.ws.send(json.dumps({"method": "heartbeat", "data": ts}))
+                try:
+                    await self.ws.send(json.dumps({"method": "heartbeat", "data": ts}))
+                except websockets.ConnectionClosed:
+                    pass
             return
         if msg_type == "M" and topic:
             self._latest[topic] = data.get("data", {})
 
-    async def _reconnect(self) -> None:
+    async def _safe_close_ws(self) -> None:
         if self.ws:
             try:
                 await self.ws.close()
             except Exception:
                 pass
             self.ws = None
+        await self._reconnect()
+
+    async def _reconnect(self) -> None:
+        """Reconnect without spawning nested receive loops."""
         delay = min(self._reconnect_delay, self.config.ws_max_reconnect_delay)
         self._reconnect_delay = min(self._reconnect_delay * 2, self.config.ws_max_reconnect_delay)
         log.info(f"Reconnecting Predict.Fun WS in {delay}s")
         await asyncio.sleep(delay)
         try:
-            await self.connect()
+            extra_headers = {"x-api-key": self.api_key}
+            self.ws = await websockets.connect(self.url, additional_headers=extra_headers)
+            log.info("Predict.Fun WS reconnected")
+            for topic in list(self._subscriptions):
+                await self.subscribe(topic)
         except Exception as e:
             log.warning(f"Predict.Fun WS reconnect failed: {e}")
+            self.ws = None
 
     def get_snapshot(self, topic: str) -> dict[str, Any] | None:
         return self._latest.get(topic)
