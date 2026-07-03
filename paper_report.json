@@ -1,5 +1,5 @@
 {
-  "started_at": 1783056387.0395362,
+  "started_at": 1783056831.960722,
   "mode": "PAPER",
   "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
   "signed_orders": [
@@ -8,27 +8,63 @@
       "question": "Will Ethereum hit $1,000 or $3,000 first?",
       "side": "BUY",
       "price": 0.55,
-      "shares": 100.0,
-      "paper_id": "paper-1581001878"
+      "shares": 9.09090909090909,
+      "paper_id": "paper-1035909579",
+      "preflight": {
+        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+        "usdt_balance": 426.88666,
+        "usdt_allowance": 0.0,
+        "required": 5.0,
+        "can_place": false,
+        "reason": "insufficient allowance: 0.0000 < 5.0000"
+      }
     },
     {
       "market_id": 142932,
       "question": "Will BNB hit $400 or $800 first?",
       "side": "BUY",
       "price": 0.53,
-      "shares": 100.0,
-      "paper_id": "paper-1783856601"
+      "shares": 9.433962264150942,
+      "paper_id": "paper-1159586104",
+      "preflight": {
+        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+        "usdt_balance": 426.88666,
+        "usdt_allowance": 0.0,
+        "required": 5.0,
+        "can_place": false,
+        "reason": "insufficient allowance: 0.0000 < 5.0000"
+      }
     },
     {
       "market_id": 58416,
       "question": "Will Solana hit $60 or $140 first?",
       "side": "BUY",
       "price": 0.73,
-      "shares": 100.0,
-      "paper_id": "paper-87326944"
+      "shares": 6.8493150684931505,
+      "paper_id": "paper-1725844543",
+      "preflight": {
+        "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+        "usdt_balance": 426.88666,
+        "usdt_allowance": 0.0,
+        "required": 5.0,
+        "can_place": false,
+        "reason": "insufficient allowance: 0.0000 < 5.0000"
+      }
     }
   ],
-  "ended_at": 1783056400.949497,
+  "safety_summary": {
+    "killed": false,
+    "kill_reason": null,
+    "open_orders": 0,
+    "total_notional": 0.0
+  },
+  "on_chain_summary": {
+    "address": "0xdFeCd64B2B1ea4D3885A48ab83f5d4166C52F25c",
+    "chain_id": 56,
+    "usdt_balance": 426.88666,
+    "usdt_allowance_ctf": 0.0
+  },
+  "ended_at": 1783056855.978104,
   "rate_limits": {
     "general": {
       "limit": 240,
@@ -37,7 +73,7 @@
     },
     "trading": {
       "limit": 500,
-      "remaining": 496,
+      "remaining": 497,
       "calls": 13
     }
   }
