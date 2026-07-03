@@ -1,0 +1,6 @@
+httpx>=0.27.0
+websockets>=12.0
+python-dotenv>=1.0.0
+eth-account>=0.13.0
+predict-sdk>=0.1.0
+pytest>=8.0.0
